@@ -129,6 +129,9 @@ def main(cfg: DictConfig) -> None:
         cfg.simulation_log_main_path is None
     ), "Simulation_log_main_path must not be set when running simulation."
 
+    # print(cfg)
+    # exit(1)
+
     run_simulation(cfg=cfg)
 
     if is_s3_path(Path(cfg.output_dir)):
