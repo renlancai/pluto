@@ -121,6 +121,8 @@ def build_lightning_datamodule(
     )
 
     # Build dataset scenarios
+    # import pdb; pdb.set_trace()
+    logger.info("Building build_scenarios start...")
     scenarios = build_scenarios(cfg, worker, model)
 
     # Create datamodule
@@ -250,11 +252,16 @@ def build_training_engine(cfg: DictConfig, worker: WorkerPool) -> TrainingEngine
     torch_module_wrapper = build_torch_module_wrapper(cfg.model)
 
     # Build the datamodule
+    # import pdb; pdb.set_trace()
+    logger.info("Building build_lightning_datamodule start...")
     datamodule = build_lightning_datamodule(cfg, worker, torch_module_wrapper)
 
     # Build lightning module
+    logger.info("Building build_lightning_module start...")
     model = build_lightning_module(cfg, torch_module_wrapper)
 
+    logger.info("Building TrainingEngine start...")
     engine = TrainingEngine(trainer=trainer, datamodule=datamodule, model=model)
 
+    logger.info("Building TrainingEngine end...")
     return engine
