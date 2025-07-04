@@ -130,6 +130,9 @@ class PlanningModel(TorchModuleWrapper):
         agent_mask = data["agent"]["valid_mask"][:, :, : self.history_steps]
         polygon_center = data["map"]["polygon_center"]
         polygon_mask = data["map"]["valid_mask"]
+        
+        #todo: add routing points to cross attention with the lateral queries.
+        # routing_points = data["routing"]["points"]
 
         bs, A = agent_pos.shape[0:2]
 

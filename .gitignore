@@ -162,3 +162,5 @@ wandb/
 outputs/
 *.ckpt
 checkpoints/
+enter_docker.sh
+*nohup*

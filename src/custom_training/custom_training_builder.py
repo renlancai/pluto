@@ -87,6 +87,8 @@ class TrainingEngine:
         """
         return f"<{type(self).__module__}.{type(self).__qualname__} object at {hex(id(self))}>"
 
+is_load_global = False
+global_scenarios = None
 
 def build_lightning_datamodule(
     cfg: DictConfig, worker: WorkerPool, model: TorchModuleWrapper
@@ -123,7 +125,17 @@ def build_lightning_datamodule(
     # Build dataset scenarios
     # import pdb; pdb.set_trace()
     logger.info("Building build_scenarios start...")
-    scenarios = build_scenarios(cfg, worker, model)
+    scenarios = None
+    
+    global is_load_global, global_scenarios
+    if is_load_global is True:
+        logger.info("Building build_scenarios from buffer...")
+        scenarios = global_scenarios
+    else:
+        logger.info("Building build_scenarios from scratch...")
+        scenarios = build_scenarios(cfg, worker, model)
+        global_scenarios = scenarios
+        is_load_global = True
 
     # Create datamodule
     datamodule: pl.LightningDataModule = CustomDataModule(
@@ -196,8 +208,8 @@ def build_custom_trainer(cfg: DictConfig) -> pl.Trainer:
             save_top_k=cfg.lightning.trainer.checkpoint.save_top_k,
             save_last=True,
         ),
-        RichModelSummary(max_depth=1),
-        RichProgressBar(),
+        # RichModelSummary(max_depth=1),
+        # RichProgressBar(),
         LearningRateMonitor(logging_interval="epoch"),
     ]
 
@@ -231,6 +243,7 @@ def build_custom_trainer(cfg: DictConfig) -> pl.Trainer:
     trainer = pl.Trainer(
         callbacks=callbacks,
         logger=training_logger,
+        # enable_progress_bar=False,
         **params,
     )
 

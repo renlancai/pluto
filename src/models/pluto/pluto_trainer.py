@@ -72,6 +72,7 @@ class LightningTrainer(pl.LightningModule):
             self.collision_loss = ESDFCollisionLoss()
 
     def on_fit_start(self) -> None:
+        # import pdb; pdb.set_trace()
         metrics_collection = MetricCollection(
             [
                 minADE().to(self.device),
@@ -363,6 +364,7 @@ class LightningTrainer(pl.LightningModule):
         :param batch_idx: batch's index (unused)
         :return: model's loss tensor
         """
+        # this is the interface for training step in pytorch lightning
         return self._step(batch, "train")
 
     def validation_step(

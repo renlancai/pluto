@@ -59,6 +59,7 @@ def main(cfg: DictConfig) -> Optional[TrainingEngine]:
             engine = build_training_engine(cfg, worker)
 
         # Run training
+        # import pdb; pdb.set_trace()
         logger.info("Starting training...")
         with ProfilerContextManager(cfg.output_dir, cfg.enable_profiling, "training"):
             engine.trainer.fit(
