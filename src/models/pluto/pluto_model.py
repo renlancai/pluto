@@ -42,9 +42,9 @@ class PlanningModel(TorchModuleWrapper):
         use_ego_history=False,
         state_attn_encoder=True,
         state_dropout=0.75,
-        use_hidden_proj=False,
-        cat_x=False,
-        ref_free_traj=False,
+        use_hidden_proj=True,
+        cat_x=True,
+        ref_free_traj=True,
         feature_builder: PlutoFeatureBuilder = PlutoFeatureBuilder(),
     ) -> None:
         super().__init__(
@@ -100,12 +100,13 @@ class PlanningModel(TorchModuleWrapper):
             future_steps=future_steps,
         )
 
-        if use_hidden_proj:
+        # import pdb; pdb.set_trace()
+        if use_hidden_proj: # not run?
             self.hidden_proj = nn.Sequential(
                 nn.Linear(dim, dim), nn.ReLU(), nn.Linear(dim, dim)
             )
 
-        if self.ref_free_traj:
+        if self.ref_free_traj: # not run?
             self.ref_free_decoder = MLPLayer(dim, 2 * dim, future_steps * 4)
 
         self.apply(self._init_weights)
@@ -165,7 +166,8 @@ class PlanningModel(TorchModuleWrapper):
 
         ref_line_available = data["reference_line"]["position"].shape[1] > 0
 
-        if ref_line_available:
+        # import pdb; pdb.set_trace()
+        if ref_line_available: # not run?
             trajectory, probability = self.planning_decoder(
                 data, {"enc_emb": x, "enc_key_padding_mask": key_padding_mask}
             )
@@ -178,9 +180,11 @@ class PlanningModel(TorchModuleWrapper):
             "prediction": prediction,  # (bs, A-1, T, 2)
         }
 
-        if self.use_hidden_proj:
+        # import pdb; pdb.set_trace()
+        if self.use_hidden_proj: # not run?
             out["hidden"] = self.hidden_proj(x[:, 0])
 
+        # import pdb; pdb.set_trace()
         if self.ref_free_traj:
             ref_free_traj = self.ref_free_decoder(x[:, 0]).reshape(
                 bs, self.future_steps, 4
